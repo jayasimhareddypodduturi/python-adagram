@@ -4,7 +4,7 @@ import logging
 import multiprocessing
 from multiprocessing.pool import ThreadPool
 import time
-
+import contextlib
 import numpy as np
 
 from . import clearn
@@ -27,7 +27,7 @@ def inplace_train(vm, train_filename, window_length,
         return (len(doc),) + x
 
     n_workers = n_workers or multiprocessing.cpu_count()
-    with ThreadPool(processes=n_workers) as pool:
+    with contextlib.closing(ThreadPool(processes=n_workers)) as pool:
         words_processed = wp_since_report = 0
         t0 = time.time()
         for i, (doc_len, lr, senses, max_senses) in enumerate(
